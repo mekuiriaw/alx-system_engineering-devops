@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+#Add the subdomain www to your domain, point it to your lb-01 IP
+#Add the subdomain lb-01 to your domain, point it to your lb-01 IP
+#Add the subdomain web-01 to your domain, point it to your web-01 IP
+#Add the subdomain web-02 to your domain, point it to your web-02 IP
+dns_info ()
+{
+    domain="$1"
+    subdomain="$2"
+    dig "$subdomain.$domain" | awk '/ANSWER SECTION:/{getline; printf "The subdomain %s is a %s record and points to %s\n", var, $4, $5}' var="$subdomain"
+}
+if [ "$#" == 2 ]
+then
+    dns_info "$1" "$2"
+elif [ "$#" == 1 ]
+then
+    dns_info "$1" "www"
+    dns_info "$1" "lb-01"
+    dns_info "$1" "web-01"
+    dns_info "$1" "web-02"
+fi
